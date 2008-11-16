@@ -1,20 +1,24 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
+def cucumber_object
+  eval("$cucumber_obj", $cucumber_context)
+end
+
 describe RemoteFeature do
   describe ".run" do
     it "should run the feature defined in the writeboard" do
-      feature = 'Feature: FeaturesTitle\nHeader\nScenario: ScenarioTitle\n Given pending step'
+      feature = "Feature: FeaturesTitle\nHeader\nScenario: ScenarioTitle\n Given pending step"
       Writeboard.create({
         :name => "Feature One",
         :path => "/ef4c90d8796ee361e",
-        :password => "123456"
+        :password => "Ql5L47DZs9SPhYj"
       }) do |wb|
         wb.post_without_revision(:title => "First Feature", :body => feature)
       end
-      RemoteFeature.run({
+      RemoteFeature.run(cucumber_object, {
         :name => "Feature One",
         :path => "/ef4c90d8796ee361e",
-        :password => "123456"
+        :password => "Ql5L47DZs9SPhYj"
       })
       rf = RemoteFeature.find(:name => "Feature One")
       Writeboard.find(:name => "Feature One") do |wb|
@@ -30,11 +34,11 @@ describe RemoteFeature do
     end
   end
   
-  describe "#result" do
-    it "should return the runner output" do
-      writeboard = mock("Writeboard", :body => "dumdidum ### RUNNER OUTPUT ### this is the result")
-      Writeboard.should_receive(:find).and_return(writeboard)
-      RemoteFeature.find(:name => "Name").result.should eql("this is the result")
-    end
-  end
+  # describe "#result" do
+  #   it "should return the runner output" do
+  #     writeboard = mock("Writeboard", :body => "dumdidum ### RUNNER OUTPUT ### this is the result")
+  #     Writeboard.should_receive(:find).and_return(writeboard)
+  #     RemoteFeature.find(:name => "Name").result.should eql("this is the result")
+  #   end
+  # end
 end
