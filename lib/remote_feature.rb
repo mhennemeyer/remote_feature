@@ -45,9 +45,6 @@ class RemoteFeature
       formatters = Cucumber::Broadcaster.new [Cucumber::Formatters::ProgressFormatter.new(io)]
       parser = Cucumber::TreetopParser::FeatureParser.new
       feature = parser.parse(feature_string).compile
-      puts feature.inspect
-      puts "!!!!!!!!!!"
-      puts self.inspect
       features = Cucumber::Tree::Features.new
       features << feature
       original_formatters = @executor.formatters
@@ -58,7 +55,7 @@ class RemoteFeature
     
     runner_output = io.string
     self.writeboard.logged_in do |wb|
-      wb.body = feature_string + "<br /> ### RUNNER OUTPUT ### \n" + runner_output
+      wb.body = feature_string + "<br /> <br /> ### RUNNER OUTPUT ### \n" + runner_output
       wb.post_without_revision
     end
     self.result = runner_output.compact

@@ -23,7 +23,7 @@ describe RemoteFeature do
       rf = RemoteFeature.find(:name => "Feature One")
       Writeboard.find(:name => "Feature One") do |wb|
         wb.get
-        wb.body.split("### RUNNER OUTPUT ###").last.should eql(rf.result)
+        wb.body.split("### RUNNER OUTPUT ###").last.gsub(%r(\A([^P])*),"").should eql(rf.result)
       end
     end
   end
