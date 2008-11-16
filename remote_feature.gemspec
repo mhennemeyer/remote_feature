@@ -13,5 +13,5 @@ Gem::Specification.new do |s|
 		"remote_feature.gemspec", 
 		"lib/remote_feature.rb"]
   s.test_files = ["spec/remote_feature_spec.rb"]
-  s.add_dependency("rwriteboard", ["> 0.1.1"])
+  s.add_dependency("mhennemeyer-rwriteboard", ["> 0.1.1"])
 end
