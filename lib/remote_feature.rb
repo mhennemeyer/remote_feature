@@ -13,7 +13,7 @@ class RemoteFeature
   def @@remote_features.find(hash)
     memo = self
     hash.each do |k,v|
-      memo = [memo.detect {|wb| wb.send(k.to_sym) == v}]
+      memo = [memo.detect {|wb| wb.respond_to?(k.to_sym) && wb.send(k.to_sym) == v}]
     end
     memo.first
   end
