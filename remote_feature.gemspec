@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name     = "remote_feature"
-  s.version  = "0.1.3"
+  s.version  = "0.1.5"
   s.date     = "2008-11-15"
   s.summary  = "Run Cucumber Features that are defined in Writeboards"
   s.email    = "mhennemeyer@gmail.com"
@@ -13,5 +13,5 @@ Gem::Specification.new do |s|
 		"remote_feature.gemspec", 
 		"lib/remote_feature.rb"]
   s.test_files = ["spec/remote_feature_spec.rb"]
-  s.add_dependency("mhennemeyer-rwriteboard", ["> 0.1.1"])
+  s.add_dependency("mhennemeyer-rwriteboard", ["> 0.1.2"])
 end
