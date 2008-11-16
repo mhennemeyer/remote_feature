@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name     = "remote_feature"
-  s.version  = "0.1.2"
+  s.version  = "0.1.3"
   s.date     = "2008-11-15"
   s.summary  = "Run Cucumber Features that are defined in Writeboards"
   s.email    = "mhennemeyer@gmail.com"
