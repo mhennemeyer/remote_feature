@@ -1,5 +1,5 @@
 require 'rubygems'
-#require 'rwriteboard'
+require 'rwriteboard'
 require 'stringio'
 
 
