@@ -5,10 +5,16 @@ def cucumber_object
 end
 
 describe RemoteFeature do
+  
   describe ".run" do
+    after :each do
+      RemoteFeature.find(:name => "Feature One").result = ""
+    end
+      
     it "should run the feature defined in the writeboard" do
       feature = "Feature: FeaturesTitle\nHeader\nScenario: ScenarioTitle\n Given pending step"
       sep_patt = "->Output"
+      
       Writeboard.create({
         :name => "Feature One",
         :path => "/ef4c90d8796ee361e",
@@ -16,6 +22,7 @@ describe RemoteFeature do
       }) do |wb|
         wb.post_without_revision(:title => "First Feature", :body => feature)
       end
+      
       RemoteFeature.run(cucumber_object, {
         :name => "Feature One",
         :path => "/ef4c90d8796ee361e",
@@ -23,12 +30,49 @@ describe RemoteFeature do
         :output_separator => sep_patt,
         :language => "en"
       })
+      
+      rf = RemoteFeature.find(:name => "Feature One")
+      
+      Writeboard.find(:name => "Feature One") do |wb|
+        wb.get
+        runner_out_in_wb = wb.body.split(sep_patt).last.gsub(%r(\A([^P])*),"")
+        runner_out_in_wb.should eql(rf.result)
+      end
+    end
+    
+    it "should should accept quotes in the step declaration" do
+      feature_with_single_quotes = "Feature: FeaturesTitle\nHeader\nScenario: ScenarioTitle\nGiven 'pending' step"
+      sep_patt = "->Output"
+      
+      Writeboard.create({
+        :name => "Feature One",
+        :path => "/ef4c90d8796ee361e",
+        :password => "Ql5L47DZs9SPhYj"
+      }) do |wb|
+        wb.post_without_revision(:title => "First Feature", :body => feature_with_single_quotes)
+      end
+      # 
+      # Writeboard.find(:name => "Feature One") do |wb|
+      #   puts wb.get.body.strip_tags.cut_runner_output("output_separator").gsub(%r(\\n),"\n")
+      # end
+      # 
+      RemoteFeature.run(cucumber_object, {
+        :name => "Feature One",
+        :path => "/ef4c90d8796ee361e",
+        :password => "Ql5L47DZs9SPhYj",
+        :output_separator => sep_patt,
+        :language => "en"
+      })
+      
       rf = RemoteFeature.find(:name => "Feature One")
       Writeboard.find(:name => "Feature One") do |wb|
         wb.get
-        wb.body.split(sep_patt).last.gsub(%r(\A([^P])*),"").should eql(rf.result)
+        runner_out_in_wb = wb.body.split(sep_patt).last.gsub(%r(\A([^P])*),"")
+        runner_out_in_wb.should eql(rf.result)
       end
     end
+    
+    
   end
   
   describe "remote_features.find(hash)" do
