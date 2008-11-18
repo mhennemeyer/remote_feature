@@ -1,12 +1,13 @@
 require 'rubygems'
-require 'rwriteboard'
+#require 'rwriteboard'
 require 'stringio'
 
 
 class RemoteFeature
   attr_accessor :result,
                 :writeboard,
-                :name
+                :name,
+                :output_separator
   
   @@remote_features ||= []
   
@@ -32,16 +33,12 @@ class RemoteFeature
     end
     io = StringIO.new
 
-    feature_string = wb_body.cut_runner_output
-    
+    feature_string = wb_body.cut_runner_output(self.output_separator).gsub(%r(\\n),"\n")
+    raise "Writeboard is empty" if feature_string.empty?
     cucumber_obj.instance_eval do
-      require 'rubygems'
-      require 'cucumber'
-      require 'cucumber/treetop_parser/feature_en.rb'
-      require 'cucumber/broadcaster.rb'
-
+      # TODO user chooses language
       Cucumber.load_language('en')
-      # coloring stuff??
+      ::Term::ANSIColor.coloring = false
       formatters = Cucumber::Broadcaster.new [Cucumber::Formatters::ProgressFormatter.new(io)]
       parser = Cucumber::TreetopParser::FeatureParser.new
       feature = parser.parse(feature_string).compile
@@ -55,18 +52,22 @@ class RemoteFeature
     
     runner_output = io.string
     self.writeboard.logged_in do |wb|
-      wb.body = feature_string + "<br /> <br /> ### RUNNER OUTPUT ### \n" + runner_output
+      wb.body = feature_string + "\n \n #{self.output_separator} \n" + runner_output
       wb.post_without_revision
     end
     self.result = runner_output.compact
   end
   
   def self.run(cucumber_obj, hash)
-    unless wb = Writeboard.writeboards.find(hash)
-      Writeboard.create(hash)
-      wb = Writeboard.writeboards.find(hash)
+    raise "inadequate writeboard parameters" unless hash[:name] && hash[:path] && hash[:password]
+    wb_parameters = {:name => hash[:name], :path => hash[:path], :password => hash[:password]}
+    unless wb = Writeboard.writeboards.find(wb_parameters)
+      Writeboard.create(wb_parameters)
+      wb = Writeboard.writeboards.find(wb_parameters)
     end
+    raise "I wasn't able to create a reference to the Writeboard #{hash}" unless wb
     rf = self.new(wb)
+    rf.output_separator = hash[:output_separator] || "RUNNER OUTPUT"
     rf.run(cucumber_obj)
   end
   

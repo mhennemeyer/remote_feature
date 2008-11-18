@@ -1,7 +1,8 @@
 dir = File.dirname(__FILE__)
 require dir + "/../lib/remote_feature.rb"
 require 'rubygems'
-require 'rwriteboard'
+#require 'rwriteboard'
+require "/Users/macbook/Projekte/rwriteboard/lib/rwriteboard.rb"
 require 'cucumber'
 require 'stringio'
 

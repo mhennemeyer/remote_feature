@@ -8,6 +8,7 @@ describe RemoteFeature do
   describe ".run" do
     it "should run the feature defined in the writeboard" do
       feature = "Feature: FeaturesTitle\nHeader\nScenario: ScenarioTitle\n Given pending step"
+      sep_patt = "->Output"
       Writeboard.create({
         :name => "Feature One",
         :path => "/ef4c90d8796ee361e",
@@ -18,12 +19,14 @@ describe RemoteFeature do
       RemoteFeature.run(cucumber_object, {
         :name => "Feature One",
         :path => "/ef4c90d8796ee361e",
-        :password => "Ql5L47DZs9SPhYj"
+        :password => "Ql5L47DZs9SPhYj",
+        :output_separator => sep_patt,
+        :language => "en"
       })
       rf = RemoteFeature.find(:name => "Feature One")
       Writeboard.find(:name => "Feature One") do |wb|
         wb.get
-        wb.body.split("### RUNNER OUTPUT ###").last.gsub(%r(\A([^P])*),"").should eql(rf.result)
+        wb.body.split(sep_patt).last.gsub(%r(\A([^P])*),"").should eql(rf.result)
       end
     end
   end
